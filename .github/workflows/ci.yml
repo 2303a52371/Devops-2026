@@ -1,55 +1,35 @@
-
-name: CI - Integration Tests (Backend APIs)
+name: CI Pipeline - Backend Tests
 
 on:
   push:
+    branches: [ main, develop ]
   pull_request:
+    branches: [ main, develop ]
 
 jobs:
-  integration-tests:
+  test:
     runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+    - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18
-          cache: 'npm'
-          cache-dependency-path: './backend/package-lock.json'
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
 
-      - name: Install backend dependencies
-        working-directory: backend
-        run: npm install
+    - name: Install dependencies (backend)
+      run: npm install
+      working-directory: ./backend
 
-      # Start backend server in background
-      - name: Start backend server
-        working-directory: backend
-        run: |
-          nohup npm start > server.log 2>&1 &
-          echo $! > server.pid
+    - name: Run tests (backend)
+      run: npm test
+      working-directory: ./backend
 
-      # Wait for server to be ready (simple wait)
-      - name: Wait for backend to be ready
-        run: |
-          for i in {1..20}; do
-            curl -s http://localhost:5000/api/dashboard && echo "Backend is up!" && exit 0
-            echo "Waiting for backend..."
-            sleep 1
-          done
-          echo "Backend failed to start"
-          exit 1
-
-      - name: Run integration tests (Jest + Supertest)
-        working-directory: backend
-        run: npm test
-
-      # Always stop backend (even if tests fail)
-      - name: Stop backend server
-        if: always()
-        run: |
-          if [ -f backend/server.pid ]; then
-            kill $(cat backend/server.pid) || true
-          fi
+    - name: Test Success
+      if: success()
+      run: echo "✅ All tests passed!"
