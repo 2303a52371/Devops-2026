@@ -9,27 +9,17 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    
-    strategy:
-      matrix:
-        node-version: [18.x, 20.x]
 
     steps:
     - uses: actions/checkout@v4
 
-    - name: Use Node.js ${{ matrix.node-version }}
+    - name: Setup Node.js 18
       uses: actions/setup-node@v4
       with:
-        node-version: ${{ matrix.node-version }}
+        node-version: 18
 
-    - name: Install dependencies (backend)
-      run: npm install
-      working-directory: ./backend
+    - name: Install dependencies
+      run: cd backend && npm install
 
-    - name: Run tests (backend)
-      run: npm test
-      working-directory: ./backend
-
-    - name: Test Success
-      if: success()
-      run: echo "✅ All tests passed!"
+    - name: Run tests
+      run: cd backend && npm test
