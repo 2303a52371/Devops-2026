@@ -1,0 +1,118 @@
+/* =========================
+   BASE
+========================= */
+
+body {
+  margin: 0;
+  height: 100vh;
+  font-family: sans-serif;
+  transition: background 0.5s ease;
+  overflow: hidden;
+}
+
+
+/* =========================
+   OFF MODE (dark room)
+========================= */
+
+body.lamp-off {
+  background: #0b0f19;
+}
+
+
+/* =========================
+   ON MODE (light glow)
+========================= */
+
+body.lamp-on {
+  background: #1a1a1a;
+}
+
+
+/* ⭐ GLOW LAYER (only when ON) */
+body.lamp-on::before {
+  content: "";
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  width: 500px;
+  height: 500px;
+
+  background: radial-gradient(circle,
+      rgba(255, 223, 120, 0.9),
+      rgba(255, 200, 80, 0.5),
+      transparent 70%);
+
+  filter: blur(40px);
+
+  pointer-events: none; /* ⭐ allows clicking button */
+  z-index: 0;
+}
+
+
+/* =========================
+   ROOM LAYOUT
+========================= */
+
+.room {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  position: relative;
+  z-index: 1;
+}
+
+
+/* =========================
+   LAMP DESIGN
+========================= */
+
+.lamp {
+  width: 60px;
+  height: 120px;
+  background: #444;
+  border-radius: 10px;
+  position: relative;
+}
+
+/* bulb */
+.bulb {
+  width: 80px;
+  height: 80px;
+  background: #333;
+  border-radius: 50%;
+  position: absolute;
+  top: -60px;
+  left: -10px;
+  transition: 0.4s;
+}
+
+/* bulb glow when ON */
+body.lamp-on .bulb {
+  background: #ffd54f;
+  box-shadow:
+    0 0 40px #ffd54f,
+    0 0 80px #ffb300,
+    0 0 120px #ff9800;
+}
+
+
+/* =========================
+   SWITCH BUTTON
+========================= */
+
+.switch {
+  margin-top: 80px;
+  padding: 12px 30px;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  font-size: 16px;
+  position: relative;
+  z-index: 10;
+  background: white;
+}
