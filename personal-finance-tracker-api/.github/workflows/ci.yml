@@ -3,9 +3,11 @@ name: CI - Dockerize Node.js API
 on:
   push:
     branches:
+      - main
       - master
   pull_request:
     branches:
+      - main
       - master
 
 jobs:
@@ -21,8 +23,12 @@ jobs:
 
       - name: Build Docker image
         run: |
+          cd personal-finance-tracker-api
           docker build -t finance-tracker-api .
 
-      - name: Run Docker container
+      - name: Test Docker image
         run: |
-          docker run -d -p 3000:3000 finance-tracker-api
+          docker run --rm -p 3000:3000 -d --name test-api finance-tracker-api
+          sleep 5
+          curl -f http://localhost:3000/api/dashboard || exit 1
+          docker stop test-api
